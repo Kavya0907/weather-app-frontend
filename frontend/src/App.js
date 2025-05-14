@@ -7,6 +7,7 @@ function App() {
   const [currentWeather, setCurrentWeather] = useState(null);
   const [forecast, setForecast] = useState([]);
   const [history, setHistory] = useState([]);
+  const [videoUrl, setVideoUrl] = useState("");
   const [error, setError] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -103,6 +104,15 @@ function App() {
       setError(err.response?.data || "Failed to export");
     }
   };
+  const fetchYoutubeVideo = async () => {
+    try {
+      setError("");
+      const response = await axios.get(`${baseUrl}/video?location=${location}`);
+      setVideoUrl(response.data);
+    } catch (err) {
+      setError(err.response?.data || "Failed to fetch YouTube video");
+    }
+  };
 
   return (
     <div className="App">
@@ -117,6 +127,7 @@ function App() {
       <button onClick={fetchCurrentLocationWeather}>
         Use Current Location
       </button>
+      <button onClick={fetchYoutubeVideo}>Get YouTube Video</button>
       {error && <p className="error">{error}</p>}
 
       {currentWeather && (
@@ -149,6 +160,20 @@ function App() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+      {videoUrl && (
+        <div className="youtube-video">
+          <h2>Weather-related YouTube Video</h2>
+          <iframe
+            width="560"
+            height="315"
+            src={videoUrl.replace("watch?v=", "embed/")}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
         </div>
       )}
 
